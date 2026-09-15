@@ -16,13 +16,23 @@ export function Arrow({ down = false }: { down?: boolean }) {
 export function Brand() {
   return (
     <span className="brand">
-      <img
-        src="/brand/dalaux-logo.png"
-        width="900"
-        height="258"
-        alt=""
-        decoding="async"
-      />
+      <svg
+        width="28"
+        height="30"
+        viewBox="0 0 28 30"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M3 3h9c9 0 13 4 13 12S21 27 12 27H3V3Z"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        />
+        <path d="M9 8v14h4c5 0 7-2 7-7s-2-7-7-7H9Z" fill="currentColor" />
+      </svg>
+      <span>
+        dalaux<span className="brand-period">.</span>
+      </span>
     </span>
   );
 }
