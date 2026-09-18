@@ -29,27 +29,27 @@ const faqs = [
 const journeyStages = [
   {
     label: "01 / LEAD CAPTURE",
-    title: "Never lose the next opportunity.",
+    title: "From enquiry to the right conversation.",
     description:
-      "An enquiry arrives. The right details are captured, the opportunity is understood, and your team knows exactly where to take it next.",
-    steps: ["Capture the enquiry", "Qualify the need", "Route to your team"],
-    outcome: "A qualified lead, ready for a human conversation.",
+      "A form, email, or chat message becomes a clear lead record. The system can summarize the need, flag what matters, and send it to the right person to follow up.",
+    steps: ["Collect the enquiry", "Understand the need", "Alert your team"],
+    outcome: "A useful brief for a timely, personal reply.",
   },
   {
     label: "02 / ONBOARDING",
-    title: "Make every new beginning effortless.",
+    title: "A smoother start for every client.",
     description:
-      "Once a client says yes, the busywork can take care of itself. Welcome them, collect what is needed, and prepare the next step in one connected flow.",
-    steps: ["Welcome the client", "Gather essentials", "Prepare the handoff"],
-    outcome: "A confident start for your client and your team.",
+      "When a client says yes, the welcome, information requests, and internal handoff can move together. Your team sees what is complete and what still needs attention.",
+    steps: ["Send the welcome", "Collect the details", "Prepare the handoff"],
+    outcome: "A client who feels looked after and a team that is ready.",
   },
   {
     label: "03 / SUPPORT",
-    title: "Give every question a useful answer.",
+    title: "Answers that keep the human touch.",
     description:
-      "Bring context to incoming questions, surface helpful information, and hand off the moments that need a person. Fast support without losing the human touch.",
-    steps: ["Understand the question", "Find the context", "Answer or escalate"],
-    outcome: "The right response, with a human when it matters.",
+      "A question comes in. The system finds relevant approved information, helps with routine requests, and passes sensitive or unusual cases to a person with the context intact.",
+    steps: ["Read the question", "Find the context", "Answer or hand off"],
+    outcome: "Faster help, without leaving complex cases to a bot.",
   },
 ];
 
@@ -58,8 +58,10 @@ function App() {
   const [briefOpen, setBriefOpen] = useState(false);
   const [service, setService] = useState("AI automation");
   const [activeStage, setActiveStage] = useState(0);
+  const [immersed, setImmersed] = useState(false);
   const lastTrigger = useRef<HTMLElement | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
+  const processorShell = useRef<HTMLDivElement>(null);
   function openBrief(selected = "AI automation") {
     lastTrigger.current = document.activeElement as HTMLElement;
     setService(selected);
@@ -104,6 +106,7 @@ function App() {
     const stages = Array.from(
       document.querySelectorAll<HTMLElement>("[data-workflow-stage]"),
     );
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     function updateStage() {
       frame = 0;
@@ -113,6 +116,26 @@ function App() {
         if (stage.getBoundingClientRect().top <= midpoint) current = index;
       });
       setActiveStage(current);
+
+      // Ease from the hero's angled view into the closer, front-facing story view.
+      const raw = Math.max(
+        0,
+        Math.min(
+          1,
+          (window.scrollY - 20) / Math.max(400, window.innerHeight * 0.65),
+        ),
+      );
+      const progress =
+        motionPreference.matches || window.innerWidth <= 1000
+          ? 0
+          : raw * raw * (3 - 2 * raw);
+      const heroZoom =
+        window.innerWidth > 1000 && window.innerWidth <= 1250 ? 0.78 : 0.93;
+      const shell = processorShell.current;
+      shell?.style.setProperty("--board-angle-x", `${47 - progress * 31}deg`);
+      shell?.style.setProperty("--board-angle-z", `${-35 + progress * 27}deg`);
+      shell?.style.setProperty("--story-zoom", `${heroZoom + progress * 0.23}`);
+      setImmersed(raw > 0.45 && window.innerWidth > 1000);
     }
     function requestUpdate() {
       if (!frame) frame = window.requestAnimationFrame(updateStage);
@@ -120,9 +143,11 @@ function App() {
     updateStage();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
+    motionPreference.addEventListener("change", requestUpdate);
     return () => {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
+      motionPreference.removeEventListener("change", requestUpdate);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
@@ -213,8 +238,12 @@ function App() {
               PRECISION.
             </div>
           </div>
-          <div className="processor-shell">
-            <Processor active={activeStage} onSelect={selectStage} />
+          <div className="processor-shell" ref={processorShell}>
+            <Processor
+              active={activeStage}
+              immersed={immersed}
+              onSelect={selectStage}
+            />
           </div>
           <div className="hero-baseline">
             <span>YOUR NEXT CHAPTER, INTELLIGENTLY BUILT.</span>
@@ -231,8 +260,8 @@ function App() {
                 <em>More ways forward.</em>
               </h2>
               <p>
-                Follow the signal. See how a connected system can take everyday
-                work from first input to a better outcome.
+                See how connected tools and thoughtful automation turn routine
+                work into a clearer next step for your team.
               </p>
               <span className="journey-scroll-cue">SCROLL TO EXPLORE ↓</span>
             </div>

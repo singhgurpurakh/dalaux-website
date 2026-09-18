@@ -4,23 +4,23 @@ const workflows = [
   {
     name: "Lead capture",
     input: "NEW ENQUIRY",
-    output: "QUALIFIED LEAD",
+    output: "READY TO REPLY",
     description:
-      "Capture an enquiry. Understand the opportunity. Connect it to your team.",
+      "Collect the details. Understand the need. Give your team a useful brief.",
   },
   {
     name: "Onboarding",
     input: "NEW CLIENT",
     output: "READY TO GO",
     description:
-      "Welcome a client. Prepare their workspace. Start the relationship smoothly.",
+      "Welcome the client. Gather essentials. Prepare a smooth handoff.",
   },
   {
     name: "Support",
     input: "NEW QUESTION",
-    output: "RIGHT ANSWER",
+    output: "ANSWER OR HANDOFF",
     description:
-      "Understand a question. Find the context. Route it to the right answer.",
+      "Find approved context. Help with the routine. Hand complex cases to a person.",
   },
 ];
 const traces = Array.from({ length: 9 }, (_, i) => {
@@ -30,10 +30,15 @@ const traces = Array.from({ length: 9 }, (_, i) => {
 });
 type ProcessorProps = {
   active: number;
+  immersed: boolean;
   onSelect: (index: number) => void;
 };
 
-export default function Processor({ active, onSelect }: ProcessorProps) {
+export default function Processor({
+  active,
+  immersed,
+  onSelect,
+}: ProcessorProps) {
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -73,6 +78,7 @@ export default function Processor({ active, onSelect }: ProcessorProps) {
       ref={scene}
       className={`processor-scene ${animationPaused ? "motion-paused" : ""}`}
       data-workflow={active}
+      data-immersed={immersed}
       onPointerMove={onPointerMove}
       onPointerLeave={() => {
         artwork.current?.style.setProperty("--tilt-x", "0deg");
@@ -96,6 +102,12 @@ export default function Processor({ active, onSelect }: ProcessorProps) {
           <span aria-hidden="true">{paused ? "▷" : "Ⅱ"}</span>
         </button>
       </div>
+      {immersed && (
+        <div className="processor-stage-badge" aria-live="polite">
+          <span>WORKFLOW 0{active + 1} / 03</span>
+          <strong>{workflows[active].name}</strong>
+        </div>
+      )}
       <div className="processor-art" ref={artwork} aria-hidden="true">
         <div className="board-shadow" />
         <div className="circuit-board">
@@ -199,6 +211,66 @@ export default function Processor({ active, onSelect }: ProcessorProps) {
               )),
             )}
           </svg>
+          <svg
+            className="board-workflow-overlay"
+            viewBox="0 0 520 520"
+            fill="none"
+          >
+            <g className="board-route route-capture">
+              <path
+                className="route-track"
+                d="M28 172h100l76 76M316 274l75 74h101"
+              />
+              <path
+                className="route-flow"
+                d="M28 172h100l76 76M316 274l75 74h101"
+                pathLength="100"
+              />
+              <circle className="route-node" cx="52" cy="172" r="10" />
+              <circle className="route-node route-node-late" cx="465" cy="348" r="10" />
+            </g>
+            <g className="board-route route-onboard">
+              <path
+                className="route-track"
+                d="M122 24v93l86 87M260 22v144M398 24v93l-86 87M208 312l-86 87v94M312 312l86 87v94"
+              />
+              <path
+                className="route-flow"
+                d="M122 24v93l86 87M260 22v144M398 24v93l-86 87M208 312l-86 87v94M312 312l86 87v94"
+                pathLength="100"
+              />
+              <circle className="route-node" cx="260" cy="64" r="9" />
+              <circle className="route-node route-node-late" cx="122" cy="455" r="9" />
+              <circle className="route-node route-node-late" cx="398" cy="455" r="9" />
+            </g>
+            <g className="board-route route-support">
+              <path
+                className="route-track"
+                d="M22 260h130l58-58M310 202l58-58h130M310 318l58 58h130"
+              />
+              <path
+                className="route-flow"
+                d="M22 260h130l58-58M310 202l58-58h130M310 318l58 58h130"
+                pathLength="100"
+              />
+              <circle className="route-ring" cx="260" cy="260" r="113" />
+              <circle className="route-ring route-ring-outer" cx="260" cy="260" r="150" />
+              <circle className="route-node" cx="52" cy="260" r="9" />
+              <circle className="route-node route-node-late" cx="465" cy="376" r="9" />
+            </g>
+          </svg>
+          <div className="board-focus-marker focus-capture">
+            <span>01</span>
+            <strong>CAPTURE</strong>
+          </div>
+          <div className="board-focus-marker focus-onboard">
+            <span>02</span>
+            <strong>PREPARE</strong>
+          </div>
+          <div className="board-focus-marker focus-support">
+            <span>03</span>
+            <strong>RESOLVE</strong>
+          </div>
           <div className="board-label">
             DLX–01
             <br />
@@ -236,14 +308,14 @@ export default function Processor({ active, onSelect }: ProcessorProps) {
       <div className="processor-callout input-callout">
         <span className="callout-point" />
         <span>
-          <small>INPUT / 01</small>
+          <small>{immersed ? "PHASE 01 / INPUT" : "INPUT / 01"}</small>
           {workflows[active].input}
         </span>
       </div>
       <div className="processor-callout output-callout">
         <span className="callout-point" />
         <span>
-          <small>OUTPUT / 02</small>
+          <small>{immersed ? "PHASE 02 / OUTCOME" : "OUTPUT / 02"}</small>
           {workflows[active].output}
         </span>
       </div>
