@@ -236,6 +236,19 @@ h2 {
   position: relative;
   z-index: 2;
   padding: 0 0 62px;
+  min-height: 550px;
+  grid-column: 1;
+  grid-row: 1;
+}
+.processor-shell {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  min-width: 0;
+  height: 550px;
+  z-index: 3;
 }
 .hero .eyebrow {
   font-size: 8.5px;
@@ -279,6 +292,7 @@ h2 {
 }
 .hero-baseline {
   grid-column: 1/-1;
+  grid-row: 2;
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
@@ -286,6 +300,125 @@ h2 {
   font: 8px var(--mono);
   letter-spacing: 1.1px;
   color: #767b70;
+}
+.journey-content {
+  grid-column: 1;
+  grid-row: 3;
+  min-width: 0;
+}
+.journey-intro {
+  min-height: 390px;
+  padding: 108px 38px 75px 0;
+}
+.journey-intro h2 {
+  margin-top: 24px;
+  font-size: clamp(40px, 4vw, 58px);
+}
+.journey-intro h2 em {
+  color: #8e8469;
+}
+.journey-intro > p {
+  max-width: 370px;
+  margin-top: 22px;
+  color: #72766e;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.journey-scroll-cue {
+  display: block;
+  margin-top: 35px;
+  color: #8a8e82;
+  font: 8px var(--mono);
+  letter-spacing: 1.4px;
+}
+.journey-stage {
+  min-height: min(78vh, 720px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 70px 50px 70px 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 75px;
+}
+.journey-stage-label {
+  color: #777d72;
+  font: 9px var(--mono);
+  letter-spacing: 1.2px;
+  transition: color 0.4s ease;
+}
+.journey-stage.is-active .journey-stage-label {
+  color: #3c6970;
+}
+.journey-stage h3 {
+  max-width: 470px;
+  margin-top: 27px;
+  font-size: clamp(40px, 4.4vw, 62px);
+  line-height: 1.07;
+  letter-spacing: -0.055em;
+}
+.journey-stage > p {
+  max-width: 400px;
+  margin-top: 23px;
+  color: #6e746b;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.journey-step-list {
+  width: min(100%, 380px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0;
+  margin: 33px 0 0;
+  list-style: none;
+  counter-reset: journey-step;
+}
+.journey-step-list li {
+  counter-increment: journey-step;
+  padding-top: 12px;
+  border-top: 1px solid #cfd4ca;
+  color: #454d45;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.journey-step-list li::before {
+  display: block;
+  margin-bottom: 7px;
+  color: #8f957e;
+  font: 8px var(--mono);
+  content: "0" counter(journey-step);
+}
+.journey-outcome {
+  width: min(100%, 400px);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 38px;
+  padding: 17px 20px;
+  border-left: 2px solid #94a69b;
+  background: #edeee8;
+  transition: border-color 0.4s ease;
+}
+.journey-stage.is-active .journey-outcome {
+  border-color: #6f9b9d;
+}
+.journey-outcome span {
+  color: #798277;
+  font: 8px var(--mono);
+  letter-spacing: 1px;
+}
+.journey-outcome strong {
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.55;
+}
+.journey-disclaimer {
+  padding: 34px 45px 70px 0;
+  border-top: 1px solid var(--line);
+  color: #7b8077;
+  font-size: 11px;
+  line-height: 1.6;
 }
 .hero-baseline > span:last-child {
   display: flex;
@@ -304,6 +437,19 @@ h2 {
   height: 550px;
   align-self: center;
   margin-top: -38px;
+  --signal-color: #a2e2ff;
+  --signal-highlight: #d1f4ff;
+  --chip-halo: #9adcff40;
+}
+.processor-scene[data-workflow="1"] {
+  --signal-color: #a9d6ac;
+  --signal-highlight: #e4f8db;
+  --chip-halo: #a9d6ac55;
+}
+.processor-scene[data-workflow="2"] {
+  --signal-color: #e5c597;
+  --signal-highlight: #fff0cc;
+  --chip-halo: #e5c59755;
 }
 .processor-topline {
   position: absolute;
@@ -402,9 +548,24 @@ h2 {
   animation: signal-flow 4.6s linear infinite;
   animation-delay: var(--delay, 0s);
   opacity: 0.8;
+  transition: stroke 0.6s ease, opacity 0.6s ease;
 }
 .signal-bloom {
   opacity: 0.55;
+}
+.processor-scene[data-workflow="0"] .signal-side-1,
+.processor-scene[data-workflow="0"] .signal-side-3,
+.processor-scene[data-workflow="2"] .signal-side-0,
+.processor-scene[data-workflow="2"] .signal-side-2 {
+  opacity: 0.12;
+}
+.processor-scene[data-workflow="1"] .signal {
+  stroke-dasharray: 10 90;
+  animation-duration: 3.8s;
+}
+.processor-scene[data-workflow="2"] .signal {
+  stroke-dasharray: 3 97;
+  animation-duration: 3s;
 }
 .processor-socket {
   position: absolute;
@@ -475,7 +636,7 @@ h2 {
     -5px 6px 0 #75807c,
     -7px 9px 0 #263a39,
     -9px 12px 0 #28322e,
-    0 0 36px #9adcff40;
+    0 0 36px var(--chip-halo);
 }
 .chip-surface {
   position: relative;
@@ -525,8 +686,8 @@ h2 {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #cdf6ff;
-  box-shadow: 0 0 10px 3px #84e0ff;
+  background: var(--signal-highlight);
+  box-shadow: 0 0 10px 3px var(--signal-color);
   animation: chip-glow 4s ease-in-out infinite;
 }
 .board-label {
@@ -673,11 +834,11 @@ h2 {
   0%,
   100% {
     opacity: 0.5;
-    box-shadow: 0 0 7px 1px #84e0ff;
+    box-shadow: 0 0 7px 1px var(--signal-color);
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 14px 4px #84e0ff;
+    box-shadow: 0 0 14px 4px var(--signal-color);
   }
 }
 @keyframes board-float {
@@ -2583,4 +2744,67 @@ h2 {
 }
 @media (max-width: 365px) {
   .processor-art { scale: .65; }
+}
+
+@media (min-width: 1450px) {
+  .hero-copy,
+  .processor-shell {
+    min-height: 575px;
+  }
+}
+@media (min-width: 1001px) and (max-width: 1100px) {
+  .hero-copy,
+  .processor-shell {
+    min-height: 505px;
+    height: 505px;
+  }
+}
+@media (max-width: 1000px) {
+  .hero-copy {
+    min-height: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .processor-shell {
+    grid-column: 1;
+    grid-row: 2;
+    position: relative;
+    top: auto;
+    height: auto;
+  }
+  .hero-baseline {
+    grid-row: 3;
+  }
+  .journey-content {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .journey-intro {
+    min-height: 0;
+    padding: 80px 0 90px;
+  }
+  .journey-stage {
+    min-height: 0;
+    padding: 85px 0;
+  }
+}
+@media (max-width: 560px) {
+  .journey-intro {
+    padding: 65px 0 70px;
+  }
+  .journey-intro h2 {
+    font-size: 43px;
+  }
+  .journey-stage {
+    padding: 75px 0;
+  }
+  .journey-stage h3 {
+    font-size: 43px;
+  }
+  .journey-step-list {
+    gap: 7px;
+  }
+  .journey-step-list li {
+    font-size: 9px;
+  }
 }

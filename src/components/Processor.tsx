@@ -28,8 +28,12 @@ const traces = Array.from({ length: 9 }, (_, i) => {
     spread = 30 + i * 7;
   return `M ${x} 198 V ${172 - i * 6} L ${x - spread} ${172 - i * 6 - spread} V ${20 + (i % 3) * 14}`;
 });
-export default function Processor() {
-  const [active, setActive] = useState(0);
+type ProcessorProps = {
+  active: number;
+  onSelect: (index: number) => void;
+};
+
+export default function Processor({ active, onSelect }: ProcessorProps) {
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -68,6 +72,7 @@ export default function Processor() {
     <div
       ref={scene}
       className={`processor-scene ${animationPaused ? "motion-paused" : ""}`}
+      data-workflow={active}
       onPointerMove={onPointerMove}
       onPointerLeave={() => {
         artwork.current?.style.setProperty("--tilt-x", "0deg");
@@ -125,26 +130,26 @@ export default function Processor() {
                     <path d={d} stroke="url(#copper)" strokeWidth="1.15" />
                     <path
                       d={d}
-                      stroke="#a2e2ff"
+                      stroke="var(--signal-color)"
                       strokeWidth="2.2"
                       pathLength="100"
-                      className="signal signal-bloom"
+                      className={`signal signal-bloom signal-side-${side}`}
                       filter="url(#signal-glow)"
                       style={
                         {
-                          "--delay": `${-(i * 0.7 + side * 1.2 + active * 0.4)}s`,
+                          "--delay": `${-(i * 0.7 + side * 1.2)}s`,
                         } as CSSProperties
                       }
                     />
                     <path
                       d={d}
-                      stroke="#d1f4ff"
+                      stroke="var(--signal-highlight)"
                       strokeWidth="1.5"
                       pathLength="100"
-                      className="signal"
+                      className={`signal signal-side-${side}`}
                       style={
                         {
-                          "--delay": `${-(i * 0.7 + side * 1.2 + active * 0.4)}s`,
+                          "--delay": `${-(i * 0.7 + side * 1.2)}s`,
                         } as CSSProperties
                       }
                     />
@@ -251,7 +256,7 @@ export default function Processor() {
           {workflows.map((workflow, i) => (
             <button
               key={workflow.name}
-              onClick={() => setActive(i)}
+              onClick={() => onSelect(i)}
               aria-pressed={active === i}
             >
               {workflow.name}

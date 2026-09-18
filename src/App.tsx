@@ -26,10 +26,38 @@ const faqs = [
   ],
 ];
 
+const journeyStages = [
+  {
+    label: "01 / LEAD CAPTURE",
+    title: "Never lose the next opportunity.",
+    description:
+      "An enquiry arrives. The right details are captured, the opportunity is understood, and your team knows exactly where to take it next.",
+    steps: ["Capture the enquiry", "Qualify the need", "Route to your team"],
+    outcome: "A qualified lead, ready for a human conversation.",
+  },
+  {
+    label: "02 / ONBOARDING",
+    title: "Make every new beginning effortless.",
+    description:
+      "Once a client says yes, the busywork can take care of itself. Welcome them, collect what is needed, and prepare the next step in one connected flow.",
+    steps: ["Welcome the client", "Gather essentials", "Prepare the handoff"],
+    outcome: "A confident start for your client and your team.",
+  },
+  {
+    label: "03 / SUPPORT",
+    title: "Give every question a useful answer.",
+    description:
+      "Bring context to incoming questions, surface helpful information, and hand off the moments that need a person. Fast support without losing the human touch.",
+    steps: ["Understand the question", "Find the context", "Answer or escalate"],
+    outcome: "The right response, with a human when it matters.",
+  },
+];
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [briefOpen, setBriefOpen] = useState(false);
   const [service, setService] = useState("AI automation");
+  const [activeStage, setActiveStage] = useState(0);
   const lastTrigger = useRef<HTMLElement | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   function openBrief(selected = "AI automation") {
@@ -72,6 +100,41 @@ function App() {
     document.addEventListener("keydown", closeOnEscape);
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
+  useEffect(() => {
+    const stages = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-workflow-stage]"),
+    );
+    let frame = 0;
+    function updateStage() {
+      frame = 0;
+      const midpoint = window.innerHeight * 0.5;
+      let current = 0;
+      stages.forEach((stage, index) => {
+        if (stage.getBoundingClientRect().top <= midpoint) current = index;
+      });
+      setActiveStage(current);
+    }
+    function requestUpdate() {
+      if (!frame) frame = window.requestAnimationFrame(updateStage);
+    }
+    updateStage();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+  function selectStage(index: number) {
+    setActiveStage(index);
+    document.getElementById(`workflow-${index}`)?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "center",
+    });
+  }
   return (
     <>
       <a className="skip-link" href="#main">
@@ -150,13 +213,55 @@ function App() {
               PRECISION.
             </div>
           </div>
-          <Processor />
+          <div className="processor-shell">
+            <Processor active={activeStage} onSelect={selectStage} />
+          </div>
           <div className="hero-baseline">
             <span>YOUR NEXT CHAPTER, INTELLIGENTLY BUILT.</span>
             <span>
               SCROLL TO EXPLORE <Arrow down />
             </span>
           </div>
+          <section className="journey-content" aria-labelledby="journey-title">
+            <div className="journey-intro">
+              <SectionLabel number="00">THE ENGINE IN ACTION</SectionLabel>
+              <h2 id="journey-title">
+                One engine.
+                <br />
+                <em>More ways forward.</em>
+              </h2>
+              <p>
+                Follow the signal. See how a connected system can take everyday
+                work from first input to a better outcome.
+              </p>
+              <span className="journey-scroll-cue">SCROLL TO EXPLORE ↓</span>
+            </div>
+            {journeyStages.map((stage, index) => (
+              <article
+                className={`journey-stage ${activeStage === index ? "is-active" : ""}`}
+                data-workflow-stage={index}
+                id={`workflow-${index}`}
+                key={stage.label}
+              >
+                <span className="journey-stage-label">{stage.label}</span>
+                <h3>{stage.title}</h3>
+                <p>{stage.description}</p>
+                <ol className="journey-step-list">
+                  {stage.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+                <div className="journey-outcome">
+                  <span>THE OUTCOME</span>
+                  <strong>{stage.outcome}</strong>
+                </div>
+              </article>
+            ))}
+            <p className="journey-disclaimer">
+              Illustrative workflows. Every system is designed around your
+              business, tools, and team.
+            </p>
+          </section>
         </section>
         <section className="tool-strip" aria-label="Integration possibilities">
           <div className="container tool-strip-inner">
