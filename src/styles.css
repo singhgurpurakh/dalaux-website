@@ -25,6 +25,7 @@ html {
 body {
   margin: 0;
   min-width: 280px;
+  overflow-x: clip;
 }
 button,
 input,
@@ -244,11 +245,40 @@ h2 {
   grid-column: 2;
   grid-row: 1 / 4;
   position: sticky;
-  top: 80px;
+  top: max(80px, calc(50vh - 275px));
   align-self: start;
   min-width: 0;
   height: 550px;
   z-index: 3;
+  isolation: isolate;
+}
+.processor-shell::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 42px -18px 92px 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #dfe7e1 0, #edf0ea 42%, transparent 72%);
+  opacity: 0.62;
+  transform: scale(0.94);
+  transition:
+    inset 0.8s ease,
+    border-radius 0.8s ease,
+    background 0.8s ease,
+    box-shadow 0.8s ease,
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+.processor-shell.story-mode::before {
+  inset: -20px -24px -26px -34px;
+  border: 1px solid #50615a;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 58% 45%, #506f6849 0, transparent 38%),
+    linear-gradient(145deg, #25312e, #17201e 72%);
+  box-shadow: 0 30px 70px #10191630;
+  opacity: 1;
+  transform: none;
 }
 .hero .eyebrow {
   font-size: 8.5px;
@@ -332,7 +362,7 @@ h2 {
   letter-spacing: 1.4px;
 }
 .journey-stage {
-  min-height: min(78vh, 720px);
+  min-height: clamp(820px, 120vh, 1040px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -349,6 +379,15 @@ h2 {
 }
 .journey-stage.is-active .journey-stage-label {
   color: #3c6970;
+}
+.journey-stage > * {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.journey-stage:not(.is-active) > * {
+  opacity: 0.72;
+  transform: translateY(5px);
 }
 .journey-stage h3 {
   max-width: 470px;
@@ -433,6 +472,7 @@ h2 {
 /* Native vector circuits and layered CSS hardware: no video or 3D runtime. */
 .processor-scene {
   position: relative;
+  z-index: 1;
   min-width: 0;
   height: 550px;
   align-self: center;
@@ -491,6 +531,24 @@ h2 {
   font-size: 16px;
   font-weight: 600;
 }
+.processor-shell.story-mode .processor-topline,
+.processor-shell.story-mode .motion-button {
+  color: #c7d1cb;
+}
+.processor-shell.story-mode .status-dot {
+  background: var(--signal-color);
+  box-shadow: 0 0 12px var(--signal-color);
+}
+.processor-shell.story-mode .processor-stage-badge {
+  right: 24px;
+  border-color: #60746d;
+  background: #111a18dc;
+  box-shadow: 0 16px 34px #0006;
+  color: #f0f2ec;
+}
+.processor-shell.story-mode .processor-stage-badge span {
+  color: var(--signal-color);
+}
 .motion-button {
   display: flex;
   align-items: center;
@@ -507,25 +565,28 @@ h2 {
 }
 .processor-art {
   position: absolute;
+  z-index: 1;
   inset: 20px -32px 105px;
   perspective: 1100px;
   transform: translate3d(var(--focus-x, 0px), var(--focus-y, 0px), 0)
     rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 0.75s ease-out, scale 0.18s linear;
   pointer-events: none;
+  transform-style: preserve-3d;
+  will-change: transform, scale;
 }
 .processor-scene[data-immersed="true"][data-workflow="0"] {
-  --focus-x: 24px;
-  --focus-y: -26px;
+  --focus-x: -15px;
+  --focus-y: 8px;
 }
 .processor-scene[data-immersed="true"][data-workflow="1"] {
-  --focus-x: 0px;
-  --focus-y: -32px;
+  --focus-x: -25px;
+  --focus-y: 0px;
   --stage-boost: 0.05;
 }
 .processor-scene[data-immersed="true"][data-workflow="2"] {
-  --focus-x: -25px;
-  --focus-y: -27px;
+  --focus-x: -35px;
+  --focus-y: 6px;
   --stage-boost: 0.02;
 }
 .board-shadow {
@@ -558,6 +619,7 @@ h2 {
   transform: rotateX(var(--board-angle-x, 47deg))
     rotateZ(var(--board-angle-z, -35deg));
   transform-style: preserve-3d;
+  backface-visibility: hidden;
   box-shadow:
     -1px 1px 0 #888f80,
     -2px 3px 0 #394340,
@@ -866,7 +928,7 @@ h2 {
 }
 .processor-callout {
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   gap: 9px;
   align-items: center;
@@ -952,6 +1014,22 @@ h2 {
   padding: 4px;
   gap: 3px;
   background: #eeeee8;
+}
+.processor-shell.story-mode .workflow-switcher {
+  border-color: #485850;
+  background: #111916dd;
+  box-shadow: 0 12px 30px #0005;
+}
+.processor-shell.story-mode .workflow-switcher button {
+  color: #aebbb4;
+}
+.processor-shell.story-mode .workflow-switcher button[aria-pressed="true"] {
+  background: #eae9e2;
+  color: #1b2a26;
+}
+.processor-shell.story-mode .processor-controls p,
+.processor-shell.story-mode .demo-label {
+  color: #aeb9b2;
 }
 .workflow-switcher button {
   font-size: 10px;

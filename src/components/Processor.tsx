@@ -77,7 +77,7 @@ export default function Processor({
     <div
       ref={scene}
       className={`processor-scene ${animationPaused ? "motion-paused" : ""}`}
-      data-workflow={active}
+      data-workflow={immersed ? active : "idle"}
       data-immersed={immersed}
       onPointerMove={onPointerMove}
       onPointerLeave={() => {
@@ -305,39 +305,45 @@ export default function Processor({
           </div>
         </div>
       </div>
-      <div className="processor-callout input-callout">
-        <span className="callout-point" />
-        <span>
-          <small>{immersed ? "PHASE 01 / INPUT" : "INPUT / 01"}</small>
-          {workflows[active].input}
-        </span>
-      </div>
-      <div className="processor-callout output-callout">
-        <span className="callout-point" />
-        <span>
-          <small>{immersed ? "PHASE 02 / OUTCOME" : "OUTPUT / 02"}</small>
-          {workflows[active].output}
-        </span>
-      </div>
-      <div className="processor-controls">
-        <div
-          className="workflow-switcher"
-          role="group"
-          aria-label="Choose a workflow demonstration"
-        >
-          {workflows.map((workflow, i) => (
-            <button
-              key={workflow.name}
-              onClick={() => onSelect(i)}
-              aria-pressed={active === i}
+      {immersed && (
+        <>
+          <div className="processor-callout input-callout">
+            <span className="callout-point" />
+            <span>
+              <small>PHASE 01 / INPUT</small>
+              {workflows[active].input}
+            </span>
+          </div>
+          <div className="processor-callout output-callout">
+            <span className="callout-point" />
+            <span>
+              <small>PHASE 02 / OUTCOME</small>
+              {workflows[active].output}
+            </span>
+          </div>
+          <div className="processor-controls">
+            <div
+              className="workflow-switcher"
+              role="group"
+              aria-label="Choose a workflow demonstration"
             >
-              {workflow.name}
-            </button>
-          ))}
-        </div>
-        <p aria-live="polite">{workflows[active].description}</p>
-        <span className="demo-label">INTERACTIVE CONCEPT · NO LIVE DATA</span>
-      </div>
+              {workflows.map((workflow, i) => (
+                <button
+                  key={workflow.name}
+                  onClick={() => onSelect(i)}
+                  aria-pressed={active === i}
+                >
+                  {workflow.name}
+                </button>
+              ))}
+            </div>
+            <p aria-live="polite">{workflows[active].description}</p>
+            <span className="demo-label">
+              INTERACTIVE CONCEPT · NO LIVE DATA
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

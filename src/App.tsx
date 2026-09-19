@@ -62,6 +62,7 @@ function App() {
   const lastTrigger = useRef<HTMLElement | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const processorShell = useRef<HTMLDivElement>(null);
+  const journeyIntro = useRef<HTMLDivElement>(null);
   function openBrief(selected = "AI automation") {
     lastTrigger.current = document.activeElement as HTMLElement;
     setService(selected);
@@ -117,13 +118,13 @@ function App() {
       });
       setActiveStage(current);
 
-      // Ease from the hero's angled view into the closer, front-facing story view.
+      // Ease from the hero view into the close-up as the story approaches.
+      const introTop = journeyIntro.current?.getBoundingClientRect().top;
+      const storyEntry = window.innerHeight * 0.82;
+      const transitionDistance = Math.max(420, window.innerHeight * 0.62);
       const raw = Math.max(
         0,
-        Math.min(
-          1,
-          (window.scrollY - 20) / Math.max(400, window.innerHeight * 0.65),
-        ),
+        Math.min(1, (storyEntry - (introTop ?? storyEntry)) / transitionDistance),
       );
       const progress =
         motionPreference.matches || window.innerWidth <= 1000
@@ -134,8 +135,13 @@ function App() {
       const shell = processorShell.current;
       shell?.style.setProperty("--board-angle-x", `${47 - progress * 31}deg`);
       shell?.style.setProperty("--board-angle-z", `${-35 + progress * 27}deg`);
-      shell?.style.setProperty("--story-zoom", `${heroZoom + progress * 0.23}`);
-      setImmersed(raw > 0.45 && window.innerWidth > 1000);
+      shell?.style.setProperty("--story-zoom", `${heroZoom + progress * 0.17}`);
+      const firstStageTop = stages[0]?.getBoundingClientRect().top;
+      setImmersed(
+        window.innerWidth > 1000 &&
+          firstStageTop !== undefined &&
+          firstStageTop <= window.innerHeight * 0.84,
+      );
     }
     function requestUpdate() {
       if (!frame) frame = window.requestAnimationFrame(updateStage);
@@ -238,7 +244,10 @@ function App() {
               PRECISION.
             </div>
           </div>
-          <div className="processor-shell" ref={processorShell}>
+          <div
+            className={`processor-shell ${immersed ? "story-mode" : ""}`}
+            ref={processorShell}
+          >
             <Processor
               active={activeStage}
               immersed={immersed}
@@ -252,7 +261,7 @@ function App() {
             </span>
           </div>
           <section className="journey-content" aria-labelledby="journey-title">
-            <div className="journey-intro">
+            <div className="journey-intro" ref={journeyIntro}>
               <SectionLabel number="00">THE ENGINE IN ACTION</SectionLabel>
               <h2 id="journey-title">
                 One engine.
