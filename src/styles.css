@@ -269,17 +269,6 @@ h2 {
     opacity 0.8s ease,
     transform 0.8s ease;
 }
-.processor-shell.story-mode::before {
-  inset: -20px -24px -26px -34px;
-  border: 1px solid #50615a;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 58% 45%, #506f6849 0, transparent 38%),
-    linear-gradient(145deg, #25312e, #17201e 72%);
-  box-shadow: 0 30px 70px #10191630;
-  opacity: 1;
-  transform: none;
-}
 .hero .eyebrow {
   font-size: 8.5px;
   letter-spacing: 1px;
@@ -530,24 +519,6 @@ h2 {
 .processor-stage-badge strong {
   font-size: 16px;
   font-weight: 600;
-}
-.processor-shell.story-mode .processor-topline,
-.processor-shell.story-mode .motion-button {
-  color: #c7d1cb;
-}
-.processor-shell.story-mode .status-dot {
-  background: var(--signal-color);
-  box-shadow: 0 0 12px var(--signal-color);
-}
-.processor-shell.story-mode .processor-stage-badge {
-  right: 24px;
-  border-color: #60746d;
-  background: #111a18dc;
-  box-shadow: 0 16px 34px #0006;
-  color: #f0f2ec;
-}
-.processor-shell.story-mode .processor-stage-badge span {
-  color: var(--signal-color);
 }
 .motion-button {
   display: flex;
@@ -1015,22 +986,6 @@ h2 {
   gap: 3px;
   background: #eeeee8;
 }
-.processor-shell.story-mode .workflow-switcher {
-  border-color: #485850;
-  background: #111916dd;
-  box-shadow: 0 12px 30px #0005;
-}
-.processor-shell.story-mode .workflow-switcher button {
-  color: #aebbb4;
-}
-.processor-shell.story-mode .workflow-switcher button[aria-pressed="true"] {
-  background: #eae9e2;
-  color: #1b2a26;
-}
-.processor-shell.story-mode .processor-controls p,
-.processor-shell.story-mode .demo-label {
-  color: #aeb9b2;
-}
 .workflow-switcher button {
   font-size: 10px;
   border: 0;
@@ -1106,18 +1061,20 @@ h2 {
 }
 
 .tool-strip {
-  border-block: 1px solid var(--line);
-  background: #f0efe9;
+  border-block: 1px solid #34413d;
+  background:
+    radial-gradient(circle at 82% 50%, #3b4a451f 0, transparent 34%),
+    linear-gradient(110deg, #18211f, #26312e);
 }
 .tool-strip-inner {
   display: flex;
   align-items: center;
   gap: 45px;
-  padding: 29px 0;
+  padding: 34px 0;
 }
 .tool-strip-inner > p {
   font-size: 10px;
-  color: #7a7c73;
+  color: #b9c4bd;
   line-height: 1.6;
   flex-shrink: 0;
 }
@@ -1127,7 +1084,7 @@ h2 {
   align-items: center;
   gap: 25px;
   width: 100%;
-  color: #686d64;
+  color: #e2e4dc;
 }
 .tool-wordmarks > span {
   font-size: 22px;
@@ -1152,13 +1109,13 @@ h2 {
 .tool-notion b {
   display: inline-block;
   font-family: Georgia, serif;
-  border: 1.5px solid #686d64;
+  border: 1.5px solid currentColor;
   border-radius: 3px;
   width: 20px;
   text-align: center;
   font-size: 18px;
   margin-right: 4px;
-  box-shadow: 2px 2px #686d64;
+  box-shadow: 2px 2px currentColor;
 }
 .section {
   padding-block: 108px;
