@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 const workflows = [
   {
@@ -39,6 +39,10 @@ export default function Processor({
   immersed,
   onSelect,
 }: ProcessorProps) {
+  const idPrefix = useId().replace(/:/g, "");
+  const boardGlowId = `${idPrefix}-board-glow`;
+  const copperId = `${idPrefix}-copper`;
+  const signalGlowId = `${idPrefix}-signal-glow`;
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -114,16 +118,16 @@ export default function Processor({
           <div className="board-edge" />
           <svg className="circuit-traces" viewBox="0 0 520 520" fill="none">
             <defs>
-              <radialGradient id="board-glow">
+              <radialGradient id={boardGlowId}>
                 <stop stopColor="#7897a6" stopOpacity=".16" />
                 <stop offset="1" stopColor="#192126" stopOpacity="0" />
               </radialGradient>
-              <linearGradient id="copper">
+              <linearGradient id={copperId}>
                 <stop stopColor="#687678" />
                 <stop offset=".5" stopColor="#a1acaa" />
                 <stop offset="1" stopColor="#414d50" />
               </linearGradient>
-              <filter id="signal-glow">
+              <filter id={signalGlowId}>
                 <feGaussianBlur stdDeviation="2" />
               </filter>
             </defs>
@@ -133,20 +137,24 @@ export default function Processor({
               width="520"
               height="520"
               rx="20"
-              fill="url(#board-glow)"
+              fill={`url(#${boardGlowId})`}
             />
             {[0, 90, 180, 270].map((rotation, side) => (
               <g key={rotation} transform={`rotate(${rotation} 260 260)`}>
                 {traces.map((d, i) => (
                   <g key={i}>
-                    <path d={d} stroke="url(#copper)" strokeWidth="1.15" />
+                    <path
+                      d={d}
+                      stroke={`url(#${copperId})`}
+                      strokeWidth="1.15"
+                    />
                     <path
                       d={d}
                       stroke="var(--signal-color)"
                       strokeWidth="2.2"
                       pathLength="100"
                       className={`signal signal-bloom signal-side-${side}`}
-                      filter="url(#signal-glow)"
+                      filter={`url(#${signalGlowId})`}
                       style={
                         {
                           "--delay": `${-(i * 0.7 + side * 1.2)}s`,

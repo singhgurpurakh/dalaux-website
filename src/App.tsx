@@ -59,6 +59,9 @@ function App() {
   const [service, setService] = useState("AI automation");
   const [activeStage, setActiveStage] = useState(0);
   const [immersed, setImmersed] = useState(false);
+  const [compactStory, setCompactStory] = useState(() =>
+    window.matchMedia("(max-width: 1000px)").matches,
+  );
   const lastTrigger = useRef<HTMLElement | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const processorShell = useRef<HTMLDivElement>(null);
@@ -104,6 +107,12 @@ function App() {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
   useEffect(() => {
+    const compactQuery = window.matchMedia("(max-width: 1000px)");
+    const updateLayout = () => setCompactStory(compactQuery.matches);
+    compactQuery.addEventListener("change", updateLayout);
+    return () => compactQuery.removeEventListener("change", updateLayout);
+  }, []);
+  useEffect(() => {
     const stages = Array.from(
       document.querySelectorAll<HTMLElement>("[data-workflow-stage]"),
     );
@@ -111,7 +120,8 @@ function App() {
     let frame = 0;
     function updateStage() {
       frame = 0;
-      const midpoint = window.innerHeight * 0.5;
+      const midpoint =
+        window.innerHeight * (window.innerWidth <= 1000 ? 0.4 : 0.5);
       let current = 0;
       stages.forEach((stage, index) => {
         if (stage.getBoundingClientRect().top <= midpoint) current = index;
@@ -137,10 +147,13 @@ function App() {
       shell?.style.setProperty("--board-angle-z", `${-35 + progress * 27}deg`);
       shell?.style.setProperty("--story-zoom", `${heroZoom + progress * 0.17}`);
       const firstStageTop = stages[0]?.getBoundingClientRect().top;
+      const lastStageBottom = stages.at(-1)?.getBoundingClientRect().bottom;
+      const mobileExitLine = Math.min(360, window.innerHeight * 0.48);
       setImmersed(
-        window.innerWidth > 1000 &&
-          firstStageTop !== undefined &&
-          firstStageTop <= window.innerHeight * 0.84,
+        firstStageTop !== undefined &&
+          lastStageBottom !== undefined &&
+          firstStageTop <= window.innerHeight * 0.84 &&
+          lastStageBottom > (window.innerWidth <= 1000 ? mobileExitLine : 0),
       );
     }
     function requestUpdate() {
@@ -245,12 +258,12 @@ function App() {
             </div>
           </div>
           <div
-            className={`processor-shell ${immersed ? "story-mode" : ""}`}
+            className={`processor-shell ${immersed && !compactStory ? "story-mode" : ""}`}
             ref={processorShell}
           >
             <Processor
               active={activeStage}
-              immersed={immersed}
+              immersed={immersed && !compactStory}
               onSelect={selectStage}
             />
           </div>
@@ -273,6 +286,15 @@ function App() {
                 work into a clearer next step for your team.
               </p>
               <span className="journey-scroll-cue">SCROLL TO EXPLORE ↓</span>
+            </div>
+            <div
+              className={`mobile-story-processor ${immersed && compactStory ? "story-mode" : ""}`}
+            >
+              <Processor
+                active={activeStage}
+                immersed={immersed && compactStory}
+                onSelect={selectStage}
+              />
             </div>
             {journeyStages.map((stage, index) => (
               <article

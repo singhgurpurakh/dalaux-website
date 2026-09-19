@@ -350,6 +350,9 @@ h2 {
   font: 8px var(--mono);
   letter-spacing: 1.4px;
 }
+.mobile-story-processor {
+  display: none;
+}
 .journey-stage {
   min-height: clamp(820px, 120vh, 1040px);
   display: flex;
@@ -2996,16 +2999,143 @@ h2 {
     grid-column: 1;
     grid-row: 4;
   }
+  .mobile-story-processor {
+    --board-angle-x: 25deg;
+    --board-angle-z: -12deg;
+    --story-zoom: 0.64;
+    position: sticky;
+    z-index: 6;
+    top: 8px;
+    display: block;
+    height: clamp(270px, 38svh, 340px);
+    margin-inline: -8px;
+    isolation: isolate;
+    background: linear-gradient(
+      180deg,
+      var(--paper) 0%,
+      var(--paper) 84%,
+      #f7f6f2e8 92%,
+      transparent 100%
+    );
+  }
+  .mobile-story-processor::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 26px 4% 35px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #dfe7e1 0, #edf0ea 48%, transparent 73%);
+    opacity: 0.7;
+  }
+  .mobile-story-processor .processor-scene {
+    height: 100%;
+    max-width: 590px;
+    margin: 0 auto;
+  }
+  .mobile-story-processor .processor-art {
+    inset: 24px 0 42px;
+    scale: calc(var(--story-zoom) + var(--stage-boost, 0));
+  }
+  .mobile-story-processor .processor-topline {
+    top: 5px;
+    left: 8px;
+    right: 8px;
+  }
+  .mobile-story-processor .processor-stage-badge {
+    top: 37px;
+    right: 5px;
+    min-width: 132px;
+    gap: 2px;
+    padding: 8px 10px;
+  }
+  .mobile-story-processor .processor-stage-badge span {
+    font-size: 7px;
+  }
+  .mobile-story-processor .processor-stage-badge strong {
+    font-size: 12px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .processor-callout {
+    max-width: 145px;
+    gap: 7px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .processor-callout small {
+    margin-bottom: 4px;
+    font-size: 7px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .callout-point {
+    width: 6px;
+    height: 6px;
+    box-shadow: 0 0 0 4px var(--chip-halo);
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .input-callout {
+    top: 91px;
+    left: 2px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .output-callout {
+    top: auto;
+    right: 2px;
+    bottom: 51px;
+  }
+  .mobile-story-processor .processor-controls {
+    bottom: 5px;
+  }
+  .mobile-story-processor .workflow-switcher {
+    padding: 3px;
+  }
+  .mobile-story-processor .workflow-switcher button {
+    min-height: 29px;
+    padding: 6px 11px;
+    font-size: 8px;
+  }
   .journey-intro {
     min-height: 0;
     padding: 80px 0 90px;
   }
   .journey-stage {
-    min-height: 0;
-    padding: 85px 0;
+    min-height: 112svh;
+    justify-content: flex-start;
+    padding: clamp(65px, 8svh, 85px) 0 105px;
+    scroll-margin-top: 15px;
   }
 }
 @media (max-width: 560px) {
+  .mobile-story-processor {
+    --story-zoom: 0.54;
+    height: clamp(220px, 42svh, 285px);
+    margin-inline: -5px;
+  }
+  .mobile-story-processor .processor-art {
+    inset: 20px 0 36px;
+  }
+  .mobile-story-processor .processor-stage-badge {
+    top: 31px;
+    min-width: 116px;
+    padding: 6px 8px;
+  }
+  .mobile-story-processor .processor-stage-badge strong {
+    font-size: 10px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .processor-callout {
+    max-width: 120px;
+    padding: 6px 7px;
+    font-size: 8px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .processor-callout small {
+    font-size: 6px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .input-callout {
+    top: 76px;
+  }
+  .mobile-story-processor .processor-scene[data-immersed="true"] .output-callout {
+    bottom: 43px;
+  }
+  .mobile-story-processor .workflow-switcher button {
+    min-height: 27px;
+    padding: 5px 8px;
+    font-size: 7px;
+  }
   .journey-intro {
     padding: 65px 0 70px;
   }
@@ -3013,7 +3143,8 @@ h2 {
     font-size: 43px;
   }
   .journey-stage {
-    padding: 75px 0;
+    min-height: 118svh;
+    padding: clamp(55px, 8svh, 75px) 0 90px;
   }
   .journey-stage h3 {
     font-size: 43px;
